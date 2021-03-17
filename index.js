@@ -234,13 +234,22 @@ const viewEmployees = () => {
     //     }
     //   ])
     console.table(employees);
-    start()
+    start();
   })
 };
 
-// const viewRoles = () => {
+const viewRoles = () => {
+  connection.query(`SELECT role.id, title, salary, department.name, employee.first_name, employee.last_name 
+  FROM role
+  LEFT JOIN department on role.department_id = department.id
+  LEFT JOIN employee on role.id = employee.role_id;
+  `, (err, roles) => {
+    if (err) throw err;
+    console.table(roles);
+    start();
+  }) 
 
-// };
+};
 
 // const viewDepartments = () => {
 
