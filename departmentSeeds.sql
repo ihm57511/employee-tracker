@@ -2,32 +2,27 @@
 USE employeeTracker_DB;
 
 INSERT INTO department (name)
-VALUES ()
+VALUES ("Executive Suite");
 
 INSERT INTO department (name)
-VALUES ()
+VALUES ("Human Resources");
 
 INSERT INTO department (name)
-VALUES ()
+VALUES ("Sales");
 
 INSERT INTO department (name)
-VALUES ()
+VALUES ("Account Management");
 
 INSERT INTO department (name)
-VALUES ()
+VALUES ("Development");
 
 INSERT INTO department (name)
-VALUES ()
+VALUES ("Project Management");
 
 INSERT INTO department (name)
-VALUES ()
+VALUES ("Design");
 
 INSERT INTO department (name)
-VALUES ()
+VALUES ("Office Management");
 
-INSERT INTO department (name)
-VALUES ()
-
-INSERT INTO department (name)
-VALUES ()
 
