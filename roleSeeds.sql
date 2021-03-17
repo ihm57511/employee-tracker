@@ -56,5 +56,5 @@ INSERT INTO role (title, salary, department_id)
 VALUES ("Intern", 2500000, 8);
 
 INSERT INTO role (title, salary, department_id)
-VALUES ("Intern", 0, 8);
+VALUES ("Umpaid Intern", 0, 8);
 
