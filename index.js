@@ -29,27 +29,39 @@ const addInfo = () => {
   inquirer
     .prompt([
       {
-        name: 'addMenu',
+        name: 'firstName',
+        type: 'input',
+        message: "Please enter employee's first name."
+      },
+      {
+        name: 'lastName',
+        type: 'input',
+        message: "Please enter employee's last name."
+      },
+      {
+        name: 'roleId',
         type: 'list',
-        message: 'Would you like to add an employee, department, or manager?',
+        message: "Please choose this employee's role.",
         choices: [
-          { name: 'EMPLOYEE', value: addEmployee },
-          { name: 'MANAGER', value: addManager },
-          { name: 'DEPARTMENT', value: addDepartment },
-          { name: 'MAIN MENU', value: start},
-        ]
-      }
+
+        ],
+      },
+      {
+        name: 'managerId',
+        type: 'list',
+        message: "Please choose this employee's manager.",
+        choices: [
+
+        ],
+      },
+      {
+        name: 'salary',
+        type: 'input',
+        message: "Please enter employee's salary."
+      },
+
     ])
 };
-
-const addEmployee = () => {
-  inquirer
-    .prompt([
-      {
-        name
-      }
-    ])
-}
 
 const viewInfo = () => {
 
