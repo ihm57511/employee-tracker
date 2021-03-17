@@ -2,7 +2,7 @@
 USE employeeTracker_DB;
 
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
-VALUES ("Katy", "McCabe", 1);
+VALUES ("Katy", "McCabe", 1, null);
 
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
 VALUES ("Edith", "Simon", 2, 1);
