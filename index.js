@@ -239,7 +239,8 @@ const viewEmployees = () => {
 };
 
 const viewRoles = () => {
-  connection.query(`SELECT role.id, title, salary, department.name, employee.first_name, employee.last_name 
+  connection.query(
+    `SELECT role.id, title, salary, department.name, employee.first_name, employee.last_name 
   FROM role
   LEFT JOIN department on role.department_id = department.id
   LEFT JOIN employee on role.id = employee.role_id;
@@ -251,9 +252,18 @@ const viewRoles = () => {
 
 };
 
-// const viewDepartments = () => {
+const viewDepartments = () => {
+  connection.query(
+    `SELECT department.id, department.name, role.title, role.salary, employee.first_name, employee.last_name
+  FROM department
+  LEFT JOIN role on department.id = role.department_id
+  LEFT JOIN employee on role.id = employee.role_id;
+  `, (err, departments) => {
+    if (err) throw err;
+    console.table(departments)
+  })
 
-// };
+};
 
 // const updateInfo = () => {
 
