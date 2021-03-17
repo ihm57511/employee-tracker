@@ -29,6 +29,23 @@ const addInfo = () => {
   inquirer
     .prompt([
       {
+        name: 'addMenu',
+        type: 'list',
+        message: 'Would you like to add an employee, department, or manager?',
+        choices: [
+          { name: 'EMPLOYEE', value: addEmployee },
+          { name: 'ROLE', value: addRole },
+          { name: 'DEPARTMENT', value: addDepartment },
+          { name: 'MAIN MENU', value: start},
+        ]
+      }
+    ])
+};
+
+const addEmployee = () => {
+  inquirer
+    .prompt([
+      {
         name: 'firstName',
         type: 'input',
         message: "Please enter employee's first name."
@@ -36,7 +53,7 @@ const addInfo = () => {
       {
         name: 'lastName',
         type: 'input',
-        message: "Please enter employee's last name."
+        message: "Please enter employee's last name.",
       },
       {
         name: 'roleId',
@@ -54,14 +71,43 @@ const addInfo = () => {
 
         ],
       },
+    ])
+}
+
+const addRole = () => {
+  inquirer
+    .prompt([
+      {
+        name: 'roleTitle',
+        type: 'input',
+        message: "Please enter title of new role."
+      },
       {
         name: 'salary',
         type: 'input',
-        message: "Please enter employee's salary."
+        message: "Please enter salary amount for new role."
       },
+      {
+        name: 'roleDept',
+        type: 'list',
+        message: "Please select the parent department for new role.",
+        choices: [
 
+        ]
+      }
     ])
-};
+}
+
+const addDepartment = () => {
+  inquirer
+    .prompt([
+      {
+        name: 'deptartmentTitle',
+        type: 'input',
+        message: "Please enter title of new department",
+      }
+    ])
+}
 
 const viewInfo = () => {
 
