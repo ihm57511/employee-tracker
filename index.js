@@ -129,28 +129,38 @@ const addEmployee = () => {
 };
 
 const addRole = () => {
-  connection.query(`SELECT * FROM `)
-  inquirer
-    .prompt([
-      {
-        name: 'roleTitle',
-        type: 'input',
-        message: "Please enter title of new role."
-      },
-      {
-        name: 'salary',
-        type: 'input',
-        message: "Please enter salary amount for new role."
-      },
-      {
-        name: 'roleDept',
-        type: 'list',
-        choices: [
-
-        ],
-        message: "Please select the parent department for new role.",
-      }
-    ])
+  connection.query(`SELECT department.name, department.id FROM department`, (err, departmentList) => {
+    if (err) throw err;
+    inquirer
+      .prompt([
+        {
+          name: 'roleTitle',
+          type: 'input',
+          message: "Please enter title of new role."
+        },
+        {
+          name: 'salary',
+          type: 'input',
+          message: "Please enter salary amount for new role."
+        },
+        {
+          name: 'roleDept',
+          type: 'list',
+          choices: () => departmentList.map((department) => {
+            return { name: department.name, value: department.id }
+          }),
+          message: "Please select the parent department for new role.",
+        }
+      ])
+      .then((newRole) => {
+        connection.query(`INSERT INTO role SET ?`, {
+          title: newRole.roleTitle,
+          salary: newRole.salary,
+          department_id: newRole.roleDept,
+        })
+        setTimeout(somethingElse, 2000);
+      })
+  })
 };
 
 const addDepartment = () => {
@@ -162,6 +172,12 @@ const addDepartment = () => {
         message: "Please enter title of new department",
       }
     ])
+    .then((newDept) => {
+      connection.query(`INSERT INTO department SET ?`, {
+        name: newDept.deptartmentTitle,
+      })
+      setTimeout(somethingElse, 2000);
+    })
 };
 
 const viewInfo = () => {
@@ -246,28 +262,27 @@ const viewEmployeesByList = () => {
           name: 'employeeList',
           type: 'list',
           choices: () => employees.map((name) => {
-            return { name: `${name.first_name} ${name.last_name}`, value: name.id}
+            return { name: `${name.first_name} ${name.last_name}`, value: name.id }
           }),
           message: "Which employee would you like to view?"
         }
       ])
       .then((selectedEmployee) => {
-        // const query = `SELECT * FROM employee WHERE employee.id = ${selectedEmployee.employeeList}`
         connection.query(`SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name
         AS department, role.salary 
         FROM employee 
         LEFT JOIN role on employee.role_id = role.id 
         LEFT JOIN department on role.department_id = department.id 
         WHERE employee.id = ${selectedEmployee.employeeList}`,
-         (err, row) => {
-           if (err) throw err;
-           console.table(row)
-         })
-         setTimeout(somethingElse, 2000);
-         
-        })
+          (err, row) => {
+            if (err) throw err;
+            console.table(row)
+          })
+        setTimeout(somethingElse, 2000);
+
       })
-    };
+  })
+};
 
 const viewRoles = () => {
   connection.query(
@@ -296,9 +311,48 @@ const viewDepartments = () => {
   setTimeout(somethingElse, 2000)
 };
 
-// const updateInfo = () => {
-
-// };
+const updateInfo = () => {
+  connection.query(`SELECT * FROM employee
+   `, (err, employees) => {
+    if (err) throw err;
+    connection.query(`SELECT * FROM role`, (err, titleList) => {
+      if (err) throw err;
+    inquirer
+      .prompt([
+        {
+          name: 'employeeList',
+          type: 'list',
+          choices: () => employees.map((name) => {
+            return { name: `${name.first_name} ${name.last_name}`, value: name.id }
+          }),
+          message: "Which employee would you like to update?"
+        },
+        {
+          name: 'roleId',
+          type: 'list',
+          choices: () => titleList.map((role) => {
+            return { name: `${role.title}`, value: role.id }
+          }),
+          message: "Please choose this employee's updated role.",
+        },
+      ])
+      .then((selectedEmployee) => {
+        connection.query(
+          `UPDATE employee SET ? WHERE ?`,
+          [
+            {
+              role_id: selectedEmployee.roleId,
+            },
+            {
+              id: selectedEmployee.employeeList,
+            },
+          ]
+        )
+        setTimeout(somethingElse, 2000)
+      })
+    })       
+  })
+};
 
 const somethingElse = () => {
   inquirer
