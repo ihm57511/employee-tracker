@@ -16,12 +16,6 @@ const start = () => {
       name: 'mainMenu',
       type: 'list',
       message: 'Welcome, what would you like to do?',
-      // choices: [
-      //   { name: 'Add Info', value: addInfo },
-      //   { name: 'View Info', value: viewInfo },
-      //   { name: 'Update Info', value: updateInfo },
-      //   { name: 'EXIT', value: connection.end },
-      // ]
       choices: [
         'Add Info',
         'View Info',
@@ -52,23 +46,19 @@ const start = () => {
 
 const addInfo = () => {
   inquirer
-    .prompt({
-      name: 'addMenu',
-      type: 'list',
-      message: 'Would you like to add an employee, department, or manager?',
-      // choices: [
-      //   { name: 'Employee', value: addEmployee },
-      //   { name: 'Role', value: addRole },
-      //   { name: 'Department', value: addDepartment },
-      //   { name: 'MAIN MENU', value: start},
-      // ]
-      choices: [
-        'Employee',
-        'Role',
-        'Department',
-        'MAIN MENU',
-      ],
-    })
+    .prompt([
+      {
+        name: 'addMenu',
+        type: 'list',
+        message: 'Would you like to add an employee, department, or manager?',
+        choices: [
+          'Employee',
+          'Role',
+          'Department',
+          'MAIN MENU',
+        ],
+      }
+    ])
     .then((answer) => {
       switch (answer.addMenu) {
         case 'Employee':
@@ -118,8 +108,8 @@ const addEmployee = () => {
           {
             name: 'managerId',
             type: 'list',
-            choices : () => reportsTo.map((manager) => {
-              return { name: `${manager.first_name} ${manager.last_name}`, value: manager.id}
+            choices: () => reportsTo.map((manager) => {
+              return { name: `${manager.first_name} ${manager.last_name}`, value: manager.id }
             }),
             message: "Please choose this employee's manager.",
           }
@@ -131,7 +121,7 @@ const addEmployee = () => {
             role_id: newEmployee.roleId,
             manager_id: newEmployee.managerId,
           })
-          start();
+          setTimeout(somethingElse, 2000);
         })
     })
   })
@@ -180,12 +170,6 @@ const viewInfo = () => {
       name: 'viewMenu',
       type: 'list',
       message: 'Which info would you like to view?',
-      // choices: [
-      // { name: 'Employees', value: viewEmployees },
-      // { name: 'Roles', value: viewRoles },
-      // { name: 'Departments', value: viewDepartments },
-      // { name: 'MAIN MENU', value: start},
-      // ]
       choices: [
         'Employees',
         'Roles',
@@ -222,21 +206,68 @@ const viewEmployees = () => {
    LEFT JOIN department on role.department_id = department.id
    `, (err, employees) => {
     if (err) throw err;
-    // inquirer
-    //   .prompt([
-    //     {
-    //     name: 'employeeList',
-    //     type: 'list',
-    //     choices : () => employees.map((name) => {
-    //       return name
-    //     }),
-    //     message: "Which employee would you like to view?"
-    //     }
-    //   ])
-    console.table(employees);
-    start();
+    inquirer
+      .prompt([
+        {
+          name: 'viewEmployeeMenu',
+          type: 'list',
+          message: "Would you like to view all employee's, or select from list?",
+          choices: [
+            'View All',
+            'Select From List',
+          ]
+        },
+      ])
+      .then((answer) => {
+        switch (answer.viewEmployeeMenu) {
+          case 'View All':
+            console.table(employees);
+            setTimeout(somethingElse, 2000);
+            break;
+          case 'Select From List':
+            viewEmployeesByList();
+            break;
+        }
+      })
   })
 };
+
+const viewEmployeesByList = () => {
+  connection.query(`SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name
+   AS department, role.salary 
+   FROM employee
+   LEFT JOIN role on employee.role_id = role.id
+   LEFT JOIN department on role.department_id = department.id
+   `, (err, employees) => {
+    if (err) throw err;
+    inquirer
+      .prompt([
+        {
+          name: 'employeeList',
+          type: 'list',
+          choices: () => employees.map((name) => {
+            return { name: `${name.first_name} ${name.last_name}`, value: name.id}
+          }),
+          message: "Which employee would you like to view?"
+        }
+      ])
+      .then((selectedEmployee) => {
+        // const query = `SELECT * FROM employee WHERE employee.id = ${selectedEmployee.employeeList}`
+        connection.query(`SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name
+        AS department, role.salary 
+        FROM employee 
+        LEFT JOIN role on employee.role_id = role.id 
+        LEFT JOIN department on role.department_id = department.id 
+        WHERE employee.id = ${selectedEmployee.employeeList}`,
+         (err, row) => {
+           if (err) throw err;
+           console.table(row)
+         })
+         setTimeout(somethingElse, 2000);
+         
+        })
+      })
+    };
 
 const viewRoles = () => {
   connection.query(
@@ -247,8 +278,8 @@ const viewRoles = () => {
   `, (err, roles) => {
     if (err) throw err;
     console.table(roles);
-    start();
-  }) 
+  })
+  setTimeout(somethingElse, 2000);
 
 };
 
@@ -262,12 +293,38 @@ const viewDepartments = () => {
     if (err) throw err;
     console.table(departments)
   })
-
+  setTimeout(somethingElse, 2000)
 };
 
 // const updateInfo = () => {
 
 // };
+
+const somethingElse = () => {
+  inquirer
+    .prompt([
+      {
+        name: 'addMenu',
+        type: 'list',
+        message: 'Would you like to something else?',
+        choices: [
+          'Yes',
+          'No',
+        ],
+      }
+    ])
+    .then((answer) => {
+      switch (answer.addMenu) {
+        case 'Yes':
+          start();
+          break;
+
+        case 'No':
+          connection.end();
+          break;
+      }
+    })
+};
 
 connection.connect((err) => {
   if (err) throw err;
